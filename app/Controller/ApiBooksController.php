@@ -1,6 +1,6 @@
 <?php
-require_once "./Model/BooksModel.php";
-require_once "./View/ApiView.php";
+require_once "./app/Model/BooksModel.php";
+require_once "./app/View/ApiView.php";
 
 class ApiBooksController{
 
@@ -21,34 +21,34 @@ class ApiBooksController{
         }
     }
 
-    function obtenerTarea($params = null){
-        $idTarea = $params[":ID"];
-        $tarea = $this->model->getTask($idTarea);
-        if ($tarea){
-            return $this->view->response($tarea, 200);
+    function obtenerLibro($params = null){
+        $idLibro = $params[":ID"];
+        $libro = $this->model->getBookFromDB($idLibro);
+        if ($libro){
+            return $this->view->response($libro, 200);
         } else {
             return $this->view->response(null, 404);
         }
     }
 
-    function eliminarTarea($params = null){
-        $idTarea = $params[":ID"];
-        $tarea = $this->model->getTask($idTarea);
-        if ($tarea){
-            $this->model->deleteTaskFromDB($idTarea);
-            return $this->view->response("La tarea nro $idTarea fue eliminada", 200);
+    function eliminarLibro($params = null){
+        $idLibro = $params[":ID"];
+        $libro = $this->model->getBookFromDB($idLibro);
+        if ($libro){
+            $this->model->deleteBookFromDB($idLibro);
+            return $this->view->response("El libro nro $idLibro fue eliminado", 200);
         } else {
-            return $this->view->response("La tarea nro $idTarea no existe", 404);
+            return $this->view->response("El libro nro $idLibro no existe", 404);
         }
     }
 
-    function insertarTarea($params = null){
+    function insertarLibro($params = null){
         // obtengo el body del request (json)
         $body = $this->getBody();
 
         // falta hacer validaciones
 
-        $id = $this->model->insertTask($body->titulo, $body->descripcion, $body->prioridad, 0);
+        $id = $this->model->createBookFromDB($body->title, $body->genre, $body->descrip, $body->id_author);
         if ($id != 0){
             $this->view->response("La tarea se insertó con el id $id", 200);
         } else {
@@ -56,21 +56,19 @@ class ApiBooksController{
         }
     }
 
-    function actualizarTarea($params = null){
-        $idTarea = $params[":ID"];
+    function actualizarLibro($params = null){
+        $idLibro = $params[":ID"];
         $body = $this->getBody();
         // validaciones
 
-        $tarea = $this->model->getTask($idTarea);
-        if ($tarea){
-            $this->model->updateFromDB($idTarea, $body->titulo, $body->descripcion, $body->prioridad, $body->finalizada);
-            $this->view->response("La tarea con el id=$idTarea se modificó con exito", 200);
+        $libro = $this->model->getBookFromDB($idLibro);
+        if ($libro){
+            $this->model->updateBookFromDB($idLibro, $body->title, $body->genre, $body->descrip, $body->id_author);
+            $this->view->response("El libro con el id=$idLibro se modificó con exito", 200);
         } else {
-            return $this->view->response("La tarea nro $idTarea no existe", 404);
+            return $this->view->response("El libro nro $idLibro no existe", 404);
         }
     }
-
-
 
     // devuelve el body del request
 

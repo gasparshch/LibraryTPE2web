@@ -46,20 +46,15 @@ class BooksModel{
         $query->execute();
         $books = $query->fetchAll(PDO::FETCH_OBJ);
     
-        // busco el ID mas grande, habria que optimizar con lastInsertID()
-        $max = 0;
-        foreach($books as $book){
-            if($book->id_book > $max){
-                $max = $book->id_book;
-            }
-        }
-        $proxId = $max + 1;
+        
     
         // preparo la sentencia para insertar
-        $query = $this->db->prepare("INSERT INTO books(id_book, title, genre, descrip, id_author) VALUES(?, ?, ?, ?, ?) ");
+        $query = $this->db->prepare("INSERT INTO books(title, genre, descrip, id_author) VALUES(?, ?, ?, ?) ");
     
         // ejecuto la sentencia, le paso un arreglo que va a tomar esos signos de pregunta
-        $query->execute(array($proxId, $title, $genre, $descrip, $id_author));
+        $query->execute(array($title, $genre, $descrip, $id_author));
+
+        return $this->db->lastInsertId();
     
     }
 
