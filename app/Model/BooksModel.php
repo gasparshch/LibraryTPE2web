@@ -9,12 +9,17 @@ class BooksModel{
         $this->db = new PDO('mysql:host=localhost;'.'dbname=db_biblioteca;charset=utf8', 'root', '');
     }
 
-    function getBooksFromDB() {
+    function getBooksFromDB($sort = null, $order = null) {
          
         // preparo la sentencia para devolver el resultado
-        $query = $this->db->prepare("SELECT books.*, authors.namename FROM books INNER JOIN authors ON books.id_author = authors.id_author");
-        
-        $query->execute();
+        if ($sort && $order) {
+            $query = $this->db->prepare("SELECT books.*, authors.namename FROM books INNER JOIN authors ON books.id_author = authors.id_author ORDER BY $sort $order");
+            $query->execute();
+        } else {
+            $query = $this->db->prepare("SELECT books.*, authors.namename FROM books INNER JOIN authors ON books.id_author = authors.id_author");
+            $query->execute();
+        }
+
         $books = $query->fetchAll(PDO::FETCH_OBJ);
     
         // devuelvo todo el array
